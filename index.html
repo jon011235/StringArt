@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧵</text></svg>">
     <link rel="stylesheet" href="app.css">
-    <title>Art Page</title>
+    <title>StringArt</title>
 </head>
 <body>
     <div id="input-container">
         <div id="input-label">Input</div>
-        <input type="text" id="input-field" placeholder="Type something...">
-        <input type="range" id="slider" min="0" max="1" step="0.01" value="0.5">
-        <button id="submit-button">Submit</button>
+        <textarea id="input-program" placeholder="Programm eingeben"></textarea>
+        <input type="range" id="speed-slider" min="0" max="1" step="0.01" value="0.1">
+        <button id="submit-button" onclick="drawArt(document.getElementById('input-program').value, document.getElementById('speed-slider').value, document.getElementById('art-canvas'));">Spinnen</button>
     </div>
     <div id="canvas-container">
         <div id="canvas-label">Art in Progress</div>
         <canvas id="art-canvas"></canvas>
     </div>
-    <script src="app.js""></script>
+    <script src="app.js"></script>
 </body>
 </html>

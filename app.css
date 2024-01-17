@@ -15,11 +15,11 @@ body {
 }
 
 #input-container {
-    background-color: #f0f0f0;
+    background-color: #e0e0e0;
 }
 
 #canvas-container {
-    background-color: #e0e0e0;
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -32,13 +32,13 @@ body {
     margin-bottom: 10px;
 }
 
-#input-field {
+#input-program {
     width: 100%;
-    padding: 20px; /* Increase height of the text field */
+    height: 80%;
     box-sizing: border-box;
 }
 
-#slider {
+#speed-slider {
     width: 100%;
     margin-bottom: 15px;
 }
@@ -50,6 +50,7 @@ body {
     background-color: #4CAF50;
     color: #fff;
     border: none;
+    margin-bottom: 50px;
     cursor: pointer;
 }
 
@@ -63,8 +64,7 @@ body {
 #art-canvas {
     border: 1px solid #000;
     width: 100%;
-    height: 0; /* Set initial height to 0 */
-    padding-bottom: 100%; /* Make the canvas square */
+    height: 80%;
 }
 
 @media (max-width: 800px) {
