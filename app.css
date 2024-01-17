@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    height: 100vh; /* Use full height of the viewport */
+}
+
+#input-container, #canvas-container {
+    flex: 1;
+    box-sizing: border-box;
+    padding: 20px;
+    height: 100%; /* Use full height of the container */
+}
+
+#input-container {
+    background-color: #f0f0f0;
+}
+
+#canvas-container {
+    background-color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#input-label, #canvas-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#input-field {
+    width: 100%;
+    padding: 20px; /* Increase height of the text field */
+    box-sizing: border-box;
+}
+
+#slider {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+#submit-button {
+    width: 100%;
+    padding: 15px; /* Increase height of the button */
+    box-sizing: border-box;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+#canvas-label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    order: -1; /* Move the canvas label above the canvas */
+}
+
+#art-canvas {
+    border: 1px solid #000;
+    width: 100%;
+    height: 0; /* Set initial height to 0 */
+    padding-bottom: 100%; /* Make the canvas square */
+}
+
+@media (max-width: 800px) {
+    #input-container, #canvas-container {
+        flex: 1 100%;
+        height: auto; /* Decrease height in mobile mode */
+    }
+}
