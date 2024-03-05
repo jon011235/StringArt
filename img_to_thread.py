@@ -56,12 +56,62 @@ class StringArt:
         self.operations.append(self.pending_operation)
     
     def printOperations(self, file=None):
-        pass # TODO
+        if file is None:
+            print(str(self.nails))
+            print("\n".join([f"{i[0]} {i[1]}" for i in self.operations]))
+        else:
+            with open(file, "w") as file:
+                file.write(self.nails)
+                file.write("\n".join([f"{i[0]} {i[1]}" for i in self.operations]))
     
     def invert(self):
         self.image = ImageOps.invert(self.image)
 
     
+
+def greedy(art, iterations=100):
+    prev_nail = 0
+    for i in range(iterations):
+        print(f"{i} iteration")
+        maxi = 0
+        max_nail = 0
+        for i in range(0,nails): # try all reachable nails
+            if i==prev_nail:
+                continue
+            brightness = art.getLine(prev_nail, i)
+            if brightness > maxi:
+                maxi = brightness
+                max_nail = i
+        art.tryChange(prev_nail, max_nail)
+        art.acceptChange()
+        prev_nail = max_nail
+    return art
+
+def drawMorePercent(art, lines, cut_at_percent=0.3, color=100, max_lines=4000):  # remmber to make a new image
+    threshold_point = round(cut_at_percent*len(lines))
+    print(len(lines), round(cut_at_percent*len(lines)))
+    #[art.drawLine(start, end, color) for v, start, end in lines if threshold>art.getLine(start,end)]
+    i=0
+    for v, start, end in lines[art.nails:threshold_pointe+art.nails]: # art.nails: since the first ones are nail to same nail
+        if lines[threshold_point][0]>art.getLine(start,end):
+            i+=1
+            if i>max_lines:
+                break
+            art.drawLine(start, end, color)
+    print(i)
+            
+
+def drawUntilThreshold(art, cut_at_percent=0.6, color=220, max_lines= 4000):
+    l = []
+    for start in range(art.nails):  # Try every possible string
+        print(f"batch {start}")
+        for end in range(art.nails):
+            brightness = art.getLine(start,end)
+            l.append((brightness, start, end))
+
+    l.sort()
+    drawMorePercent(art, l, cut_at_percent, color, max_lines)
+    return l # Allows you to play around with different percent
 
 def random_pattern(nails, thread):
     import random
@@ -70,3 +120,19 @@ def random_pattern(nails, thread):
         a = random.randint(0,nails)
         b = random.randint(0,nails)
         print(f"{a} {b}")
+
+def gcode_to_thread(path):
+    with open(path) as file:
+        a = file.read()
+    for i in a.split("\n"):
+        b = i.split("\t")
+        instructions.append(b[0]+" "+b[1])
+        maximum = max(int(b[0]),int(b[1]),maximum)
+    print(maximum)
+    print("\n".join(instructions))
+
+
+if __name__ == "__main__":
+    t = img_to_thread.StringArt(300, "test-images/face.jpg", 100)
+    save = img_to_thread.drawUntilThreshold(t, 0.85, 100)
+    t.printOperations("out.art")

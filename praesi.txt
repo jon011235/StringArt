@@ -1,0 +1,20 @@
+1) Demonstration
+2) Anti Aliasing (diskret vs. kontinuirlich)
+3) Mögliche Algorithmen
+ - Matrizenmultiplikation
+ - greedy ohne vorberechnung
+ - greedy mit vorberechnung
+ - fancy Zeug (radon transform hugh transform)
+
+4) getline, setline try/accept line testbilder
+5) Mögliche Verbesserungen
+ - kein fixer Amount von iterations /automatic threshold?
+ - Art der Linie (Veränderung Ränder zu Mitte)
+ - anti aliasing verbessern
+ - multithreading
+
+TODO testimages
+
+Linksammlung:
+Online generator: https://github.com/halfmonty/StringArtGenerator
+Herkunft der Idee: https://www.youtube.com/watch?v=WGccIFf6MF8
