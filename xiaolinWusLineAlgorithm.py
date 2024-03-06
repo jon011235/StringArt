@@ -10,14 +10,15 @@ def _fpart(x):
 def _rfpart(x):
     return 1 - _fpart(x)
 
-def putpixel(img, xy, color, alpha=0.8):
+def putpixel(img, xy, color, alpha_correction=1, alpha=0.8):
     """
     Paints color over the background at the point xy in img.
     Use alpha for blending. alpha=1 means a completely opaque foreground.
     """
+    alpha *= alpha_correction
     img.putpixel(xy, round(alpha * color + (1-alpha) * img.getpixel(xy)))
 
-def draw_line(img, p1, p2, color=200, pixel=putpixel):
+def draw_line(img, p1, p2, color=200, alpha_correction=1, pixel=putpixel):
     """Draws an anti-aliased line in img from p1 to p2 with the given color."""
     x1, y1 = p1
     x2, y2 = p2
@@ -44,8 +45,8 @@ def draw_line(img, p1, p2, color=200, pixel=putpixel):
         yend = y + grad * (xend - x)
         xgap = _rfpart(x + 0.5)
         px, py = int(xend), int(yend)
-        pixel(img, p(px, py), color, _rfpart(yend) * xgap)
-        pixel(img, p(px, py+1), color, _fpart(yend) * xgap)
+        pixel(img, p(px, py), color, alpha_correction, _rfpart(yend) * xgap)
+        pixel(img, p(px, py+1), color, alpha_correction, _fpart(yend) * xgap)
         return px
 
     xstart = draw_endpoint(p(*p1)) + 1
@@ -53,6 +54,6 @@ def draw_line(img, p1, p2, color=200, pixel=putpixel):
 
     for x in range(xstart, xend):
         y = int(intery)
-        pixel(img, p(x, y), color, _rfpart(intery))
-        pixel(img, p(x, y+1), color, _fpart(intery))
+        pixel(img, p(x, y), color, alpha_correction, _rfpart(intery))
+        pixel(img, p(x, y+1), color, alpha_correction, _fpart(intery))
         intery += grad

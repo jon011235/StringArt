@@ -18,3 +18,8 @@ TODO testimages
 Linksammlung:
 Online generator: https://github.com/halfmonty/StringArtGenerator
 Herkunft der Idee: https://www.youtube.com/watch?v=WGccIFf6MF8
+
+1) Demonstration
+2) Einführung Kreis und Pixel
+3) Framework
+4) Greedy und Ausblick
