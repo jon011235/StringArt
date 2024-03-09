@@ -1,16 +1,16 @@
 from PIL import Image, ImageOps
 from xiaolinWusLineAlgorithm import draw_line
-from queue import PriorityQueue
 import numpy as np
+from queue import PriorityQueue
 
 
 class StringArt:
-    def __init__(self, nails, input_image, thickness=2): #TODO invert picture
+    def __init__(self, nails, input_image, resolution=0.7):
         if type(input_image) == str: 
             self.image  = self.load_image(input_image)
         else:
             self.image  = input_image
-        self.scale      = 1-(thickness-1)/self.image.width
+        self.scale      = resolution
         self.image      = self.image.resize((round(self.image.width*self.scale), round(self.image.height*self.scale)), Image.Resampling.LANCZOS)
         self.nails      = nails
         self.radius     = min(self.image.height, self.image.width)*0.49
@@ -21,7 +21,6 @@ class StringArt:
 
     def load_image(self, path):
         image = Image.open(path).convert("L")  # Convert to grayscale
-        # Convert the image to a NumPy array
         return image
 
     def nailToCoordinate(self, nail):
@@ -31,8 +30,6 @@ class StringArt:
     def getLine(self, start, end):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        if p1==p0:
-            return 2000
         sum = [0.0, 0.1]
         def pixel(img, p, color, alpha_correction, transparency):
             sum[0] += transparency*img.getpixel(p)
@@ -40,17 +37,18 @@ class StringArt:
         draw_line(self.image, p0, p1, 0, 1.0, pixel)
         return sum[0]/sum[1]
 
-    def drawLine(self, start, end, color=200, alpha_correction=1):
+    def drawLine(self, start, end, color=200, alpha_correction=1, function=None):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        draw_line(self.image, p0, p1, color, alpha_correction)
+        if function is None:
+            draw_line(self.image, p0, p1, color, alpha_correction)
+        else:
+            draw_line(self.image, p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
 
-    def tryChange(self, start, end, color=200, alpha_correction=1):
+    def tryChange(self, start, end, color=200, alpha_correction=1, function=None):
         self.pending_img = self.image.copy()
-        p0 = self.nailToCoordinate(start)
-        p1 = self.nailToCoordinate(end)
-        draw_line(self.pending_img, p0, p1, color, alpha_correction)
+        draw_line(self.pending_img, start, end, color, alpha_correction, function)
         self.pending_operation = (start,end)
         
         return self.pending_img
@@ -58,19 +56,17 @@ class StringArt:
     def acceptChange(self):
         self.image = self.pending_img
         self.operations.append(self.pending_operation)
-    
-    def printOperations(self, file=None):
-        if file is None:
-            print(str(self.nails))
-            print("\n".join([f"{i[0]} {i[1]}" for i in self.operations]))
-        else:
-            with open(file, "w") as file:
-                file.write(str(self.nails)+"\n")
-                file.write("\n".join([f"{i[0]} {i[1]}" for i in self.operations]))
-    
+
     def invert(self):
         self.image = ImageOps.invert(self.image)
-
+    
+    def printOperations(self, file=None):
+        erg = str(self.nails)+"\n"+"\n".join([f"{i[0]} {i[1]}" for i in self.operations])
+        if file is None:
+            print(erg)
+        else:
+            with open(file, "w") as file:
+                file.write(erg)
     
 
 def greedy(art, iterations=100):
@@ -79,7 +75,7 @@ def greedy(art, iterations=100):
         print(f"{i} iteration")
         maxi = 0
         max_nail = 0
-        for i in range(0,nails): # try all reachable nails
+        for i in range(0,nails):
             if i==prev_nail:
                 continue
             brightness = art.getLine(prev_nail, i)
@@ -147,6 +143,48 @@ def gcode_to_thread(path):
         maximum = max(int(b[0]),int(b[1]),maximum)
     print(maximum)
     print("\n".join(instructions))
+
+"""
+two ideas below taken from halfmonty
+"""
+def pixel(img, p, color, alpha_correction, transparency):
+    # in this implementation if color gets negative crashes
+    # will happen if error gets small enough one pixel is enoug
+    img.putpixel(p, round(img.getpixel(p)-transparency*color))  
+
+def make_stringArt(image, nails=288, lines=4000, line_weight=20, min_distance=20):
+    # min_distance say the minimum amount of pins the next pin has to be away
+    art = StringArt(nails, image)
+    art.invert()
+    
+    nail = 0
+    last_nails = []
+
+    for l in range(lines):
+        max_err = -1
+        best_nail = -1
+
+        for offset in range(min_distance, nails-min_distance):
+            test_nail = (nail + offset) % nails
+            if test_nail in last_nails:
+                continue
+            line_err = art.getLine(nail, test_nail)
+
+            if line_err > max_err:
+                max_err  = line_err
+                best_nail = test_nail
+
+        art.drawLine(nail, best_nail, line_weight, function=pixel)
+        
+        last_nails.append(nail)
+        if len(last_nails) > 20:
+            last_nails.pop(0)
+        nail = best_nail
+    
+        if l%100==0:
+            print(l)
+    
+    return art
 
 
 if __name__ == "__main__":

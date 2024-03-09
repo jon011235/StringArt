@@ -1,20 +1,3 @@
-1) Demonstration
-2) Anti Aliasing (diskret vs. kontinuirlich)
-3) Mögliche Algorithmen
- - Matrizenmultiplikation
- - greedy ohne vorberechnung
- - greedy mit vorberechnung
- - fancy Zeug (radon transform hugh transform)
-
-4) getline, setline try/accept line testbilder
-5) Mögliche Verbesserungen
- - kein fixer Amount von iterations /automatic threshold?
- - Art der Linie (Veränderung Ränder zu Mitte)
- - anti aliasing verbessern
- - multithreading
-
-TODO testimages
-
 Linksammlung:
 Online generator: https://github.com/halfmonty/StringArtGenerator
 Herkunft der Idee: https://www.youtube.com/watch?v=WGccIFf6MF8
@@ -23,3 +6,13 @@ Herkunft der Idee: https://www.youtube.com/watch?v=WGccIFf6MF8
 2) Einführung Kreis und Pixel
 3) Framework
 4) Greedy und Ausblick
+5) Mögliche Verbesserungen
+groß:
+ - Art der Linie (Veränderung Ränder zu Mitte)
+ - anti aliasing verbessern
+ - multithreading
+ - andere Ansätze (radon transform)
+ Klein:
+ - calculate length of used thread
+ - a line may only jump to a nail n nails away
+ - change processing to np arrays (allows negative "color" and faster processing)
