@@ -1,16 +1,14 @@
 from PIL import Image, ImageOps
 from xiaolinWusLineAlgorithm import draw_line
-from queue import PriorityQueue
 import numpy as np
 
-
 class StringArt:
-    def __init__(self, nails, input_image, thickness=2):
+    def __init__(self, nails, input_image, resolution=0.7):
         if type(input_image) == str: 
             self.image  = self.load_image(input_image)
         else:
             self.image  = input_image
-        self.scale      = 1-(thickness-1)/self.image.width
+        self.scale      = resolution
         self.image      = self.image.resize((round(self.image.width*self.scale), round(self.image.height*self.scale)), Image.Resampling.LANCZOS)
         self.nails      = nails
         self.radius     = min(self.image.height, self.image.width)*0.49
@@ -30,8 +28,6 @@ class StringArt:
     def getLine(self, start, end):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        if p1==p0:
-            return 2000
         sum = [0.0, 0.1]
         def pixel(img, p, color, alpha_correction, transparency):
             sum[0] += transparency*img.getpixel(p)
@@ -39,17 +35,18 @@ class StringArt:
         draw_line(self.image, p0, p1, 0, 1.0, pixel)
         return sum[0]/sum[1]
 
-    def drawLine(self, start, end, color=200, alpha_correction=1):
+    def drawLine(self, start, end, color=200, alpha_correction=1, function=None):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        draw_line(self.image, p0, p1, color, alpha_correction)
+        if function is None:
+            draw_line(self.image, p0, p1, color, alpha_correction)
+        else:
+            draw_line(self.image, p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
 
-    def tryChange(self, start, end, color=200, alpha_correction=1):
+    def tryChange(self, start, end, color=200, alpha_correction=1, function=None):
         self.pending_img = self.image.copy()
-        p0 = self.nailToCoordinate(start)
-        p1 = self.nailToCoordinate(end)
-        draw_line(self.pending_img, p0, p1, color, alpha_correction)
+        draw_line(self.pending_img, start, end, color, alpha_correction, function)
         self.pending_operation = (start,end)
         
         return self.pending_img
@@ -57,19 +54,9 @@ class StringArt:
     def acceptChange(self):
         self.image = self.pending_img
         self.operations.append(self.pending_operation)
-    
-    def printOperations(self, file=None):
-        pass
-    
+
     def invert(self):
         self.image = ImageOps.invert(self.image)
-
     
-
-def random_pattern(nails, thread):
-    import random
-    print(nails)
-    for i in range(thread):
-        a = random.randint(0,nails)
-        b = random.randint(0,nails)
-        print(f"{a} {b}")
+    def printOperations(self, file=None):
+        pass # TODO implement
