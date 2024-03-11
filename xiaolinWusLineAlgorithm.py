@@ -10,13 +10,11 @@ def _fpart(x):
 def _rfpart(x):
     return 1 - _fpart(x)
 
-def putpixel(img, xy, color, alpha_correction=1, alpha=0.8):
-    """
-    Paints color over the background at the point xy in img.
-    Use alpha for blending. alpha=1 means a completely opaque foreground.
-    """
-    alpha *= alpha_correction
-    img.putpixel(xy, round(alpha * color + (1-alpha) * img.getpixel(xy)))
+def pixel(img, p, color=20, alpha_correction=1, transparency=0.8):
+    # substract "error"
+    transparency *= alpha_correction
+    color = max(0, round(img.getpixel(p)-transparency*color))
+    img.putpixel(p, color)  
 
 def draw_line(img, p1, p2, color=200, alpha_correction=1, pixel=putpixel):
     """Draws an anti-aliased line in img from p1 to p2 with the given color."""

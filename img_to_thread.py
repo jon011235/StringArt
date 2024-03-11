@@ -37,7 +37,7 @@ class StringArt:
         draw_line(self.image, p0, p1, 0, 1.0, pixel)
         return sum[0]/sum[1]
 
-    def drawLine(self, start, end, color=200, alpha_correction=1, function=None):
+    def drawLine(self, start, end, color=20, alpha_correction=1, function=None):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
         if function is None:
@@ -46,7 +46,7 @@ class StringArt:
             draw_line(self.image, p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
 
-    def tryChange(self, start, end, color=200, alpha_correction=1, function=None):
+    def tryChange(self, start, end, color=20, alpha_correction=1, function=None):
         self.pending_img = self.image.copy()
         draw_line(self.pending_img, start, end, color, alpha_correction, function)
         self.pending_operation = (start,end)
