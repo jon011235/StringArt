@@ -10,12 +10,11 @@ def _fpart(x):
 def _rfpart(x):
     return 1 - _fpart(x)
 
-def putpixel(img, xy, color, alpha_correction=1, alpha=0.8):
-    # Substract some color (for string Art not for actual drawing
-    if round(img.getpixel(xy)-alpha*alpha_correction*color)>=0:
-        img.putpixel(xy, round(img.getpixel(xy)-alpha*alpha_correction*color))
-    else:
-        img.putpixel(xy, 0)
+def pixel(img, p, color=20, alpha_correction=1, transparency=0.8):
+    # substract "error"
+    transparency *= alpha_correction
+    color = max(0, round(img.getpixel(p)-transparency*color))
+    img.putpixel(p, color)  
 
 def draw_line(img, p1, p2, color=200, alpha_correction=1, pixel=putpixel):
     """Draws an anti-aliased line in img from p1 to p2 with the given color."""
