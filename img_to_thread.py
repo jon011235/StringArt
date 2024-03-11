@@ -154,8 +154,12 @@ def pixel(img, p, color, alpha_correction, transparency):
 
 def make_stringArt(image, nails=288, lines=4000, line_weight=20, min_distance=20):
     # min_distance say the minimum amount of pins the next pin has to be away
-    art = StringArt(nails, image)
-    art.invert()
+    try:
+        nails = image.nails
+        art = image
+    except:
+        art = StringArt(nails, image)
+        art.invert()
     
     nail = 0
     last_nails = []
