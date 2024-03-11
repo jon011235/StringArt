@@ -12,7 +12,16 @@ groß:
  - anti aliasing verbessern
  - multithreading
  - andere Ansätze (radon transform)
+ - mehr farbig (verschiedene Farbkanäle und dann überlagern)
  Klein:
  - calculate length of used thread
  - a line may only jump to a nail n nails away
  - change processing to np arrays (allows negative "color" and faster processing)
+ - cache lines (no finding via xiaolin every time)
+ - Profilbilder machen
+
+
+ Was sind Graphen?
+ - Wege
+ - prozesse (mehrere Wege was ist der höchste Durchsatz)
+ - soziale Netzwerke (einfluss von Menschen aufeinander, größte Distanz)
