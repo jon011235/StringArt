@@ -47,7 +47,9 @@ class StringArt:
 
     def tryChange(self, start, end, color=20, alpha_correction=1, function=None):
         self.pending_img = self.image.copy()
-        draw_line(self.pending_img, start, end, color, alpha_correction, function)
+        self.drawLine(start, end, color, alpha_correction, function)
+        self.image, self.pending_img = self.pending_img, self.image
+        self.operations = self.operations[:-1]
         self.pending_operation = (start,end)
         
         return self.pending_img
