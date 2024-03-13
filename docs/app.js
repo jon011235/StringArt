@@ -9,14 +9,10 @@ function polar_y_function(midy, r, number_of_nails) {
 function drawArt(program, speed, canvas) {
     //make canvas a square
     const side_length = Math.min(canvas.width, canvas.height);
-    canvas.width = side_length;
-    canvas.height = side_length;
+    canvas.width = 2000;
+    canvas.height = 2000;
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (side_length<1000){
-        ctx.canvas.width = 10*side_length;
-        ctx.canvas.height = 10*side_length;
-    }
     // Set the globalAlpha to control transparency (0.0 fully transparent, 1.0 fully opaque)
     ctx.globalAlpha = 0.2;
     const radius = 0.47*Math.min(canvas.height, canvas.width);
