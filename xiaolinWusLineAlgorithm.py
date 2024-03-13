@@ -16,7 +16,7 @@ def pixel(img, p, color=20, alpha_correction=1, transparency=0.8):
     color = max(0, round(img.getpixel(p)-transparency*color))
     img.putpixel(p, color)  
 
-def draw_line(img, p1, p2, color=200, alpha_correction=1, pixel=putpixel):
+def draw_line(img, p1, p2, color=200, alpha_correction=1, pixel=pixel):
     """Draws an anti-aliased line in img from p1 to p2 with the given color."""
     x1, y1 = p1
     x2, y2 = p2
