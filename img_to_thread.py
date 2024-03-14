@@ -76,17 +76,18 @@ class StringArt:
         return string
 
 def create_strings(art):
-  art.invert()
+  #art.invert()
   c0 = 0
   c = 0
   previousNail = 0
-  darkestLine = 0
-  while len(art.operations) < 3000:
+  darkestLine = 255
+  while len(art.operations) < 1000:
     c0 += 1
-    darkestLine = 0
+    darkestLine = 255
     for nail in range(art.nails):
+        if previousNail != nail:
             gotLine = art.getLine(previousNail,nail)
-            if darkestLine < gotLine:
+            if darkestLine > gotLine:
                 darkestLine = gotLine
                 darkestNail = nail
     art.drawLine(previousNail,darkestNail)
@@ -99,21 +100,22 @@ def create_strings(art):
 
 #missing multithreading to execute all rgb channels at once
 def create_rgb_strings(rgb):
-    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb)
+    art = StringArt(288,'./test-images/lines.png',resolution=0.5,imagecolor=rgb)
     art = create_strings(art)
-    print(art.printOperations())
     art.image.save(rgb+'.png')
 
 import multiprocessing
 manager = multiprocessing.Manager()
 
-p = multiprocessing.Process(target=create_rgb_strings, args=('r'))
-p.start()
-p = multiprocessing.Process(target=create_rgb_strings, args=('g'))
-p.start()
-p = multiprocessing.Process(target=create_rgb_strings, args=('b'))
-p.start()
-p.join()
+a = multiprocessing.Process(target=create_rgb_strings, args=('r'))
+a.start()
+b = multiprocessing.Process(target=create_rgb_strings, args=('g'))
+b.start()
+c = multiprocessing.Process(target=create_rgb_strings, args=('b'))
+c.start()
+a.join()
+b.join()
+c.join()
 
 imager = Image.open('r.png')
 imageg = Image.open('g.png')
