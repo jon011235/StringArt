@@ -6,11 +6,11 @@ import numpy as np
 class StringArt:
     def __init__(self, nails, input_image, resolution=0.7,imagecolor='r'):
         self.imagecolor = imagecolor
+        self.scale      = resolution
         if type(input_image) == str: 
             self.image  = self.load_image(input_image)
         else:
             self.image  = input_image
-        self.scale      = resolution
         self.image      = self.image.resize((round(self.image.width*self.scale), round(self.image.height*self.scale)), Image.Resampling.LANCZOS)
         self.nails      = nails
         self.radius     = min(self.image.height, self.image.width)*0.49
@@ -21,12 +21,17 @@ class StringArt:
 
     def load_image(self, path):
         image = Image.open(path)
+        self.outimage = Image.new('RGB',(round(image.size[0]*self.scale), round(image.size[1]*self.scale)),color='white')
         r,g,b = image.split()
+        ori, ogi, obi = self.outimage.split()
         if self.imagecolor == 'r':
+            self.outimage = ori
             return r
         elif self.imagecolor == 'b':
+            self.outimage = obi
             return b
         elif self.imagecolor == 'g':
+            self.outimage = ogi
             return g
 
     def nailToCoordinate(self, nail):
@@ -48,6 +53,7 @@ class StringArt:
         p1 = self.nailToCoordinate(end)
         if function is None:
             draw_line(self.image, p0, p1, color, alpha_correction)
+            draw_line(self.outimage, p0, p1, color, alpha_correction)
         else:
             draw_line(self.image, p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
@@ -104,7 +110,7 @@ def create_rgb_strings(rgb):
     art = create_strings(art)
     with open(rgb+'.txt','w') as f:
         f.write(art.printOperations())
-    art.image.save(rgb+'.png')
+    art.outimage.save(rgb+'.png')
 
 import multiprocessing
 manager = multiprocessing.Manager()
@@ -125,6 +131,5 @@ imageb = Image.open('b.png')
 from time import sleep
 sleep(2) # to ensure the files are loaded correctly
 image = Image.merge('RGB',(imager,imageg,imageb))
+image.save('outputImage.png')
 image.show()
-#imageout = Image.merge('RGB',(imager,imageg,imageb))
-#imageout.show()
