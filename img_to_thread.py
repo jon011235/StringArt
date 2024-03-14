@@ -4,7 +4,8 @@ import numpy as np
 
 
 class StringArt:
-    def __init__(self, nails, input_image, resolution=0.7):
+    def __init__(self, nails, input_image, resolution=0.7,imagecolor='r'):
+        self.imagecolor = imagecolor
         if type(input_image) == str: 
             self.image  = self.load_image(input_image)
         else:
@@ -19,8 +20,14 @@ class StringArt:
 
 
     def load_image(self, path):
-        image = Image.open(path).convert("L")  # Convert to grayscale
-        return image
+        image = Image.open(path)
+        r,g,b = image.split()
+        if self.imagecolor == 'r':
+            return r
+        elif self.imagecolor == 'b':
+            return b
+        elif self.imagecolor == 'g':
+            return g
 
     def nailToCoordinate(self, nail):
         #from polar coordinates
@@ -74,7 +81,7 @@ def create_strings(art):
   c = 0
   previousNail = 0
   darkestLine = 0
-  while len(art.operations) < 3500:
+  while len(art.operations) < 3000:
     c0 += 1
     darkestLine = 0
     for nail in range(art.nails):
@@ -90,10 +97,30 @@ def create_strings(art):
         print(c)
   return art
 
-art = StringArt(288,'./test-images/einstein.jpg',resolution=0.5)
-art = create_strings(art)
+#missing multithreading to execute all rgb channels at once
+def create_rgb_strings(rgb):
+    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb)
+    art = create_strings(art)
+    print(art.printOperations())
+    art.image.save(rgb+'.png')
 
-art.image.show()
+import multiprocessing
+manager = multiprocessing.Manager()
 
-with open('stringOutput.txt','w',encoding='utf8') as f:
-    f.write(art.printOperations())
+p = multiprocessing.Process(target=create_rgb_strings, args=('r'))
+p.start()
+p = multiprocessing.Process(target=create_rgb_strings, args=('g'))
+p.start()
+p = multiprocessing.Process(target=create_rgb_strings, args=('b'))
+p.start()
+p.join()
+
+imager = Image.open('r.png')
+imageg = Image.open('g.png')
+imageb = Image.open('b.png')
+from time import sleep
+sleep(2) # to ensure the files are loaded correctly
+image = Image.merge('RGB',(imager,imageg,imageb))
+image.show()
+#imageout = Image.merge('RGB',(imager,imageg,imageb))
+#imageout.show()
