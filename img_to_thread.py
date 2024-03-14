@@ -76,18 +76,17 @@ class StringArt:
         return string
 
 def create_strings(art):
-  #art.invert()
+  art.invert()
   c0 = 0
   c = 0
   previousNail = 0
-  darkestLine = 255
-  while len(art.operations) < 1000:
+  darkestLine = 0
+  while len(art.operations) < 2000:
     c0 += 1
-    darkestLine = 255
+    darkestLine = 0
     for nail in range(art.nails):
-        if previousNail != nail:
             gotLine = art.getLine(previousNail,nail)
-            if darkestLine > gotLine:
+            if darkestLine < gotLine:
                 darkestLine = gotLine
                 darkestNail = nail
     art.drawLine(previousNail,darkestNail)
@@ -96,12 +95,15 @@ def create_strings(art):
         c += 50
         c0 = 0
         print(c)
+  art.invert()
   return art
 
 #missing multithreading to execute all rgb channels at once
 def create_rgb_strings(rgb):
-    art = StringArt(288,'./test-images/lines.png',resolution=0.5,imagecolor=rgb)
+    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb)
     art = create_strings(art)
+    with open(rgb+'.txt','w') as f:
+        f.write(art.printOperations())
     art.image.save(rgb+'.png')
 
 import multiprocessing
