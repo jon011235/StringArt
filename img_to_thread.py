@@ -61,5 +61,39 @@ class StringArt:
     def invert(self):
         self.image = ImageOps.invert(self.image)
     
-    def printOperations(self, file=None):
-        pass  # TODO implement
+    def printOperations(self,  file=None):
+        string = str(self.nails)
+        for operation in self.operations:
+            x, y = operation
+            string += '\n'+str(x)+' '+str(y)
+        return string
+
+def create_strings(art):
+  art.invert()
+  c0 = 0
+  c = 0
+  previousNail = 0
+  darkestLine = 0
+  while len(art.operations) < 3500:
+    c0 += 1
+    darkestLine = 0
+    for nail in range(art.nails):
+            gotLine = art.getLine(previousNail,nail)
+            if darkestLine < gotLine:
+                darkestLine = gotLine
+                darkestNail = nail
+    art.drawLine(previousNail,darkestNail)
+    previousNail = darkestNail
+    if c0 == 50:
+        c += 50
+        c0 = 0
+        print(c)
+  return art
+
+art = StringArt(288,'./test-images/einstein.jpg',resolution=0.5)
+art = create_strings(art)
+
+art.image.show()
+
+with open('stringOutput.txt','w',encoding='utf8') as f:
+    f.write(art.printOperations())
