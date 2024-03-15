@@ -87,7 +87,7 @@ def create_strings(art):
   c = 0
   previousNail = 0
   darkestLine = 0
-  while len(art.operations) < 2000:
+  while len(art.operations) < 2000:#Chnage the number to de- or increase the number of Threads (Heavy influence on the runtime)
     c0 += 1
     darkestLine = 0
     for nail in range(art.nails):
@@ -104,9 +104,8 @@ def create_strings(art):
   art.invert()
   return art
 
-#missing multithreading to execute all rgb channels at once
 def create_rgb_strings(rgb):
-    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb)
+    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb) #You can change the filepath and increase the resolution
     art = create_strings(art)
     with open(rgb+'.txt','w') as f:
         f.write(art.printOperations())
