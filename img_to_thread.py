@@ -87,7 +87,7 @@ def create_strings(art):
   c = 0
   previousNail = 0
   darkestLine = 0
-  while len(art.operations) < 2000:#Chnage the number to de- or increase the number of Threads (Heavy influence on the runtime)
+  while len(art.operations) < 3000:#Chnage the number to de- or increase the number of Threads (Heavy influence on the runtime)
     c0 += 1
     darkestLine = 0
     for nail in range(art.nails):
@@ -105,7 +105,7 @@ def create_strings(art):
   return art
 
 def create_rgb_strings(rgb):
-    art = StringArt(288,'./test-images/akropolis.jpeg',resolution=0.5,imagecolor=rgb) #You can change the filepath and increase the resolution
+    art = StringArt(288,'./test-images/einstein.jpg',resolution=0.8,imagecolor=rgb) #You can change the filepath and increase the resolution
     art = create_strings(art)
     with open(rgb+'.txt','w') as f:
         f.write(art.printOperations())
@@ -130,5 +130,5 @@ imageb = Image.open('b.png')
 from time import sleep
 sleep(2) # to ensure the files are loaded correctly
 image = Image.merge('RGB',(imager,imageg,imageb))
-image.save('outputImage.png')
+image.save('imageOut.png')
 image.show()
