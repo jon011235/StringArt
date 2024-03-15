@@ -1,6 +1,7 @@
 # StringArt
 
-A project for a BWINF Wintercamp.
+A project for a BWINF Wintercamp. (This fork was created from someone in this Camp)
+the fork adds the ability to create rgb solutions
 
 As seen in [this](https://youtube.com/watch?v=WGccIFf6MF8&feature=share8) video this project gives a framework to convert images to a series of threading operations that result in a (hopefully) beautiful artwork.
 
