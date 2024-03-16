@@ -1,6 +1,5 @@
 from PIL import Image, ImageOps
-from xiaolinWusLineAlgorithm import draw_line
-import numpy as np
+import math
 
 
 class StringArt:
@@ -24,7 +23,7 @@ class StringArt:
 
     def nailToCoordinate(self, nail):
         #from polar coordinates
-        return round(self.midx + self.radius*np.cos(2*np.pi*(nail/self.nails))), round(self.midy + self.radius*np.sin(2*np.pi*nail/self.nails))
+        return round(self.midx + self.radius*math.cos(2*math.pi*(nail/self.nails))), round(self.midy + self.radius*math.sin(2*math.pi*nail/self.nails))
     
     def getLine(self, start, end):
         p0 = self.nailToCoordinate(start)
@@ -33,23 +32,18 @@ class StringArt:
         def pixel(img, p, color, alpha_correction, transparency):
             sum[0] += transparency*img.getpixel(p)
             sum[1] += transparency
-        draw_line(self.image, p0, p1, 0, 1.0, pixel)
+        self.bresenham(p0, p1, function=pixel)
         return sum[0]/sum[1]
 
     def drawLine(self, start, end, color=20, alpha_correction=1, function=None):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        if function is None:
-            draw_line(self.image, p0, p1, color, alpha_correction)
-        else:
-            draw_line(self.image, p0, p1, color, alpha_correction, function)
+        self.bresenham(p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
 
-    def tryChange(self, start, end, color=20, alpha_correction=1, function=None):
+    def tryChange(self, start, end, color=20, transparency=1, function=None):
         self.pending_img = self.image.copy()
-        self.drawLine(start, end, color, alpha_correction, function)
-        self.image, self.pending_img = self.pending_img, self.image
-        self.operations = self.operations[:-1]
+        self.bresenham(start, end, color, transparency, function)
         self.pending_operation = (start,end)
         
         return self.pending_img
@@ -61,5 +55,9 @@ class StringArt:
     def invert(self):
         self.image = ImageOps.invert(self.image)
     
+    def bresenham(self, p0, p1, color=20, transparency=1, function=None):
+        pass # implement anti aliasing of task 1 here
+
     def printOperations(self, file=None):
-        pass  # TODO implement
+        pass # first output number of nails then each in a new line the start and end nail of a line seperated by a " "
+ 
