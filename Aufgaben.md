@@ -3,7 +3,7 @@
 1) Anti-Aliasing
 - Male eine gerade Linie von links nach rechts
 - Male eine Diagonale
-- Male eine vertikale Linie
+- Male eine vertikale Linie durch vertauschen von x und y Achse (ohne das Bild zu drehen)
 - Merke dir was für ein Fehler zwischen dem gesetzten Pixel und dem von der Linie gewünschten Punkt ist.
 
 2) Vertraut machen mit dem Rest des Framework
