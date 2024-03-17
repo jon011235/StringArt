@@ -29,10 +29,10 @@ class StringArt:
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
         sum = [0.0, 0.1]
-        def pixel(img, p, color, alpha_correction, transparency):
+        def pixel(img, p, color, transparency):
             sum[0] += transparency*img.getpixel(p)
             sum[1] += transparency
-        self.bresenham(p0, p1, function=pixel)
+        self.bresenham(p0, p1, 20,  1,pixel)
         return sum[0]/sum[1]
 
     def drawLine(self, start, end, color=20, alpha_correction=1, function=None):
@@ -56,8 +56,8 @@ class StringArt:
         self.image = ImageOps.invert(self.image)
     
     def bresenham(self, p0, p1, color=20, transparency=1, function=None):
-        pass # implement anti aliasing of task 1 here
+        pass # Implement anti aliasing
 
     def printOperations(self, file=None):
-        pass # first output number of nails then each in a new line the start and end nail of a line seperated by a " "
- 
+       pass # the first line should contain the number of nails
+       # The other line should be start_nail whitespace end_nail of a line
