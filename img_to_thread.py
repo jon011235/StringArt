@@ -1,7 +1,6 @@
 from PIL import Image, ImageOps
 from xiaolinWusLineAlgorithm import draw_line
-import numpy as np
-from queue import PriorityQueue
+import math
 
 
 class StringArt:
@@ -25,30 +24,27 @@ class StringArt:
 
     def nailToCoordinate(self, nail):
         #from polar coordinates
-        return round(self.midx + self.radius*np.cos(2*np.pi*(nail/self.nails))), round(self.midy + self.radius*np.sin(2*np.pi*nail/self.nails))
+        return round(self.midx + self.radius*math.cos(2*math.pi*(nail/self.nails))), round(self.midy + self.radius*math.sin(2*math.pi*nail/self.nails))
     
     def getLine(self, start, end):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
         sum = [0.0, 0.1]
-        def pixel(img, p, color, alpha_correction, transparency):
+        def pixel(img, p, color, transparency):
             sum[0] += transparency*img.getpixel(p)
             sum[1] += transparency
-        draw_line(self.image, p0, p1, 0, 1.0, pixel)
+        self.bresenham(p0, p1, 20,  1,pixel)
         return sum[0]/sum[1]
 
     def drawLine(self, start, end, color=20, alpha_correction=1, function=None):
         p0 = self.nailToCoordinate(start)
         p1 = self.nailToCoordinate(end)
-        if function is None:
-            draw_line(self.image, p0, p1, color, alpha_correction)
-        else:
-            draw_line(self.image, p0, p1, color, alpha_correction, function)
+        self.bresenham(p0, p1, color, alpha_correction, function)
         self.operations.append((start, end))
 
-    def tryChange(self, start, end, color=20, alpha_correction=1, function=None):
+    def tryChange(self, start, end, color=20, transparency=1, function=None):
         self.pending_img = self.image.copy()
-        draw_line(self.pending_img, start, end, color, alpha_correction, function)
+        self.bresenham(start, end, color, transparency, function)
         self.pending_operation = (start,end)
         
         return self.pending_img
@@ -60,6 +56,51 @@ class StringArt:
     def invert(self):
         self.image = ImageOps.invert(self.image)
     
+    def bresenham(self, p0, p1, color=20, transparency=1, function=None): # TODO if switch is active it always starts in the upper right corner
+        if p0>p1:
+            p0, p1 = p1, p0
+        if function is None:
+            def function(img, p, color=20, transparency=1):
+                # substract "error"
+                color = max(0, round((1-transparency)*img.getpixel(p)-transparency*color))
+                img.putpixel(p, color)
+        def meta_function(img, p, color=20, transparency=1, switch=False):
+            if switch:
+                x, y = p
+                function(img, (y,x), color, transparency)
+            else:
+                function(img, p, color, transparency)
+        if (p1[0]-p0[0]) ==0:
+            m = float("inf")*(p1[1]-p0[1])
+        else:
+            m = (p1[1]-p0[1])/(p1[0]-p0[0])
+        if abs(m)>1:
+            m = 1/m
+            switch = True
+            p0 = (p0[1], p0[0])
+            p1 = (p1[1], p1[0])
+            if p0>p1:
+                p0, p1 = p1, p0
+        else:
+            switch = False
+        y = lambda x: m*x+b
+        error = 0
+        current_x, current_y = p0
+        while current_x<p1[0]:
+            # 3 options right, right up or right down
+            meta_function(self.image, (current_x,current_y), color, transparency, switch)
+            error += m
+            if -1<error<1:
+                current_x+=1
+            elif 1<= error <2:
+                error-=1
+                current_x+=1
+                current_y+=1
+            elif -2< error <=-1:
+                error+=1
+                current_x+=1
+                current_y-=1
+
     def printOperations(self, file=None):
         erg = str(self.nails)+"\n"+"\n".join([f"{i[0]} {i[1]}" for i in self.operations])
         if file is None:
@@ -147,7 +188,7 @@ def gcode_to_thread(path):
 """
 two ideas below taken from halfmonty
 """
-def pixel(img, p, color, alpha_correction, transparency):
+def pixel(img, p, color, transparency):
     # in this implementation if color gets negative crashes
     # will happen if error gets small enough one pixel is enoug
     img.putpixel(p, round(img.getpixel(p)-transparency*color))  
